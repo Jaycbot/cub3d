@@ -15,7 +15,10 @@ SRC = console.c\
 		parse_file.c\
 		parse_tools.c\
 		parse_tools2.c\
-		parse_util.c
+		parse_util.c\
+		raycast.c\
+		raycast2.c\
+		utils.c
 
 SRCS = $(addprefix $(SRC_PATH)/, $(SRC))
 
@@ -36,7 +39,7 @@ LIBPATH = -L./mlx -lmlx
 all : $(NAME)
 
 $(NAME)	: $(OBJS) $(MLX)
-	gcc -o $(NAME) $(OBJ) $(HEADER) $(LIBPATH) $(FRAMEWORK)
+	gcc -o $(NAME) $(OBJS) $(CFLAG) $(LIBPATH) $(FRAMEWORK)
 
 $(MLX):
 	$(MAKE) -C mlx

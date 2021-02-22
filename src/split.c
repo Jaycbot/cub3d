@@ -25,7 +25,7 @@ static size_t	word_counter(char *str, char d)
 	return (nums);
 }
 
-static char		*find_next(char *start, char c)
+static char		*find_next_w(char *start, char c)
 {
 	char	*ret_p;
 	char	*temp;
@@ -64,7 +64,7 @@ char			**ft_split(char const *s, char c)
 	{
 		while (is_delimiter(*temp, c) && *temp)
 			++temp;
-		ret_strs[i] = find_next(temp, c);
+		ret_strs[i] = find_next_w(temp, c);
 		if (!ret_strs[i])
 			error_etc("ERROR\nMalloc faild");
 		while (!is_delimiter(*temp, c) && *temp)
