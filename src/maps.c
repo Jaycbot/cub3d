@@ -1,12 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   maps.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaehchoi <jaehchoi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/23 11:23:28 by jaehchoi          #+#    #+#             */
+/*   Updated: 2021/02/23 12:51:02 by jaehchoi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
-static int		edge_checkadd(char *row)
+static int	edge_checkadd(char *row)
 {
-	while (*row)
+	int	i;
+	
+	i = 0;
+	while (row[i])
 	{
-		if (*row != '1')
+		if (row[i] != '1')
 			return (FALSE);
-		++row;
+		++i;
 	}
 	return (TRUE);
 }
@@ -70,7 +85,7 @@ int			check_and_find(t_config *c)
 		j = 0;
 		while (map[i][j])
 		{
-			if (is_in("NSWE",map[i][j]))
+			if (is_in("NSWE", map[i][j]))
 				parse_position(c, i, j);
 			++j;
 		}

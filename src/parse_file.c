@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_file.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaehchoi <jaehchoi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/23 11:24:31 by jaehchoi          #+#    #+#             */
+/*   Updated: 2021/02/23 13:15:12 by jaehchoi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 char	*trim_cols(char *row)
@@ -32,7 +44,7 @@ int		parse_map(t_config *c, char *line)
 	int	rows;
 	int	cols;
 	int	temp;
-	
+
 	rows = 0;
 	cols = 0;
 	c->map = ft_split(line, '\n');
@@ -83,16 +95,14 @@ int		parse_by_id(t_config *c, int id, char *line)
 
 int		parse_file_lines(t_config *c, int fd)
 {
-	int		read_b;
-	int		id;
-	char	*temp;
-	char	*line;
+	int			read_b;
+	int			id;
+	static char	*temp;
+	char		*line;
 
 	read_b = 1;
-	temp = NULL;
-	while (read_b > 0)
+	while ((read_b = get_next_line(fd, &line)) > 0)
 	{
-		read_b = get_next_line(fd, &line);
 		if ((id = identifier_check(line)) == -1)
 			error_etc("ERROR\nWrong Identifier");
 		if (empty_line_check(line))
@@ -109,8 +119,6 @@ int		parse_file_lines(t_config *c, int fd)
 		else
 			parse_by_id(c, id, line);
 	}
-	if (read_b < 0)
-		error_etc("ERROR\nLine reading error");
 	return (parse_map(c, temp));
 }
 
@@ -125,5 +133,5 @@ int		parse_file(t_config *c, char *filepath)
 		error_etc("ERROR\nNo such file or invalid filepath");
 	parse_file_lines(c, fd);
 	close(fd);
-	return (TRUE);	
+	return (TRUE);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   image.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaehchoi <jaehchoi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/23 11:19:29 by jaehchoi          #+#    #+#             */
+/*   Updated: 2021/02/23 11:21:12 by jaehchoi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 void	fill_floor_ceiling(t_config *c)
@@ -29,12 +41,14 @@ int		*texture_img(t_config *c, int index, t_img *img)
 	int		x;
 	int		y;
 
-	img->img = mlx_xpm_file_to_image(c->mlx, c->textures[index].path, &img->img_w, &img->img_h);
+	img->img = mlx_xpm_file_to_image(c->mlx, c->textures[index].path,
+		&img->img_w, &img->img_h);
 	if (!img->img)
 		error_etc("ERROR\nInvalid Texture path");
 	c->textures[index].width = img->img_w;
 	c->textures[index].height = img->img_h;
-	img->data = (int *)mlx_get_data_addr(img->img, &img->bpp, &img->size_l, &img->endian);
+	img->data = (int *)mlx_get_data_addr(img->img, &img->bpp,
+		&img->size_l, &img->endian);
 	if (!(pixels = (int *)malloc(sizeof(int) * img->img_w * img->img_h)))
 		error_etc("ERROR\nMalloc failed");
 	y = 0;
@@ -53,7 +67,7 @@ void	parse_texture(t_config *c)
 {
 	int		i;
 	t_img	img;
-	
+
 	i = 0;
 	while (i < 5)
 	{

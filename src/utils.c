@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaehchoi <jaehchoi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/23 11:38:34 by jaehchoi          #+#    #+#             */
+/*   Updated: 2021/02/23 11:39:00 by jaehchoi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 void	compensate_p(t_pos *p, double width, double height)
@@ -9,14 +21,14 @@ void	compensate_p(t_pos *p, double width, double height)
 	if (p->y < 0)
 		p->y = 0;
 	if (p->y > height)
-		p->y = height - 1;	
+		p->y = height - 1;
 }
 
 int		is_space(char c)
 {
 	if (c == ' ' || (c >= 9 && c <= 13))
 		return (TRUE);
-	return (FALSE);	
+	return (FALSE);
 }
 
 int		ft_atoi(const char *nptr)

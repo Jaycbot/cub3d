@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaehchoi <jaehchoi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/23 11:22:06 by jaehchoi          #+#    #+#             */
+/*   Updated: 2021/02/23 12:27:29 by jaehchoi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 int	close_win(void *param)
@@ -14,7 +26,8 @@ int	main_loop(t_config *config)
 	move_camera(config);
 	fill_floor_ceiling(config);
 	raycast(config);
-	mlx_put_image_to_window(config->mlx, config->win.win, config->img.img, 0, 0);
+	mlx_put_image_to_window(config->mlx, config->win.win,
+		config->img.img, 0, 0);
 	return (0);
 }
 
@@ -32,7 +45,7 @@ int	main(int argc, char **argv)
 	init_window(&config);
 	parse_texture(&config);
 	mlx_hook(config.win.win, X_EVENT_KEY_PRESS, 0, key_press, &config);
-    mlx_hook(config.win.win, X_EVENT_KEY_RELEASE,0, key_release, &config);
+	mlx_hook(config.win.win, X_EVENT_KEY_RELEASE, 0, key_release, &config);
 	mlx_hook(config.win.win, X_EVENT_KEY_EXIT, 0, close_win, &config);
 	mlx_loop_hook(config.mlx, main_loop, &config);
 	mlx_loop(config.mlx);

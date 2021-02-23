@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycast2.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jaehchoi <jaehchoi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/23 11:36:09 by jaehchoi          #+#    #+#             */
+/*   Updated: 2021/02/23 11:38:10 by jaehchoi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 double	transform_to_texture(t_config *c, t_ray *ray, int stripid)
@@ -17,8 +29,9 @@ double	transform_to_texture(t_config *c, t_ray *ray, int stripid)
 
 double	normalize(double angle)
 {
-	angle = fmod(angle, (M_PI * 2));
-	if (angle < 0)
+	while (angle > 2 * M_PI)
+		angle -= 2 * M_PI;
+	while (angle < 0)
 		angle += 2 * M_PI;
 	return (angle);
 }
@@ -44,16 +57,15 @@ t_pos	wall_hit_v(t_config *c, t_ray *ray, double angle)
 	intercept.y = c->camera.y + (intercept.x - c->camera.x) * tan(angle);
 	step_x = c->tile * (ray->isfacingleft ? -1 : 1);
 	step_y = c->tile * tan(angle);
-	step_y *= ((ray->isfacingup && step_y > 0) || (ray->isfacingdown && step_y < 0)) ? -1 : 1;
+	step_y *= ((ray->isfacingup && step_y > 0) ||
+		(ray->isfacingdown && step_y < 0)) ? -1 : 1;
 	set_p(&next_touch, intercept.x, intercept.y);
 	while (is_inside_map(c, next_touch.x, next_touch.y))
 	{
-		// deal with floating point and clarify if it is in. !! push it cause hitting point is not in the grid
-		set_p(&to_check, next_touch.x + (ray->isfacingleft ? -1 : 0), next_touch.y);
+		set_p(&to_check, next_touch.x +
+			(ray->isfacingleft ? -1 : 0), next_touch.y);
 		if ((blocked(c, to_check.x, to_check.y)) == 1)
 			return (next_touch);
-		//else if (blocked(c,to_check.x,to_check.y) == 2)
-		// sprinte
 		set_p(&next_touch, next_touch.x + step_x, next_touch.y + step_y);
 	}
 	compensate_p(&next_touch, c->width, c->height);
@@ -79,12 +91,10 @@ t_pos	wall_hit_h(t_config *c, t_ray *ray, double angle)
 	set_p(&next_touch, intercept.x, intercept.y);
 	while (is_inside_map(c, next_touch.x, next_touch.y))
 	{
-		// deal with floating point and clarify if it is in. !! push it cause hitting point is not in the grid
-		set_p(&to_check, next_touch.x, next_touch.y + (ray->isfacingup ? -1 : 0));
+		set_p(&to_check, next_touch.x, next_touch.y
+			+ (ray->isfacingup ? -1 : 0));
 		if (blocked(c, to_check.x, to_check.y) == 1)
 			return (next_touch);
-		//else if (blocked(c,to_check.x,to_check.y) == 2)
-		// sprinte
 		set_p(&next_touch, next_touch.x + step_x, next_touch.y + step_y);
 	}
 	compensate_p(&next_touch, c->width, c->height);
