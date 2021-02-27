@@ -56,10 +56,14 @@ static	void	set_config(t_config *c, char *path)
 {
 	init_config(c);
 	g_camera_count = 0;
+	c->bmp.body = NULL;
 	if (!parse_file(c, path))
 		error_etc("ERROR\nFalid to load file", c);
 	if (!check_and_find(c))
 		error_etc("ERROR\nInvalidMap", c);
+	c->bmp.body = (int *)malloc(sizeof(int) * c->width * c->height);
+	if (!c->bmp.body)
+		error_etc("ERROR\nMalloc faild", c);
 	parse_texture(c);
 	init_window(c);
 	set_rays(c);
@@ -70,10 +74,15 @@ int				main(int argc, char **argv)
 {
 	t_config	config;
 
+	config = (t_config) {0};
+	if (!(argc == 2 || (argc == 3 && is_equal(argv[2], "--save"))))
+		error_etc("ERROR\nInvalid Arguments", &config);
 	config.mlx = mlx_init();
 	if (!config.mlx)
 		error_etc("ERROR\nFalid to load mlx", &config);
 	set_config(&config, argv[1]);
+	if (argc == 3 && is_equal(argv[2], "--save"))
+		save_bmp_format(&config);
 	mlx_hook(config.win.win, X_EVENT_KEY_PRESS, 0, key_press, &config);
 	mlx_hook(config.win.win, X_EVENT_KEY_RELEASE, 0, key_release, &config);
 	mlx_hook(config.win.win, X_EVENT_KEY_EXIT, 0, close_win, &config);

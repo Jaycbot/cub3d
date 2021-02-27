@@ -46,13 +46,15 @@ static	void	free_add(t_config *c)
 		mlx_destroy_image(c->mlx, c->textures[3].img.img);
 	if (c->textures[4].img.img)
 		mlx_destroy_image(c->mlx, c->textures[4].img.img);
+	if (c->bmp.body)
+		free(c->bmp.body);
 }
 void	free_all(t_config *c)
 {
 	int i;
 
 	i = 0;
-	if (c->map[i] && c->map)
+	if (c->map && c->map[i])
 	{
 		while (c->map[i])
 			free_line(c->map[i++]);

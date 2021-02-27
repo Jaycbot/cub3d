@@ -211,5 +211,6 @@ void			insert_pixel(t_img *img, int x, int y, int color);
 void			*ft_memset(void *s, int c, size_t n);
 int				pick_pixel(t_img *img, int x, int y);
 void			check_resolution(t_config *c);
+void			save_bmp_format(t_config *c);
 
 #endif

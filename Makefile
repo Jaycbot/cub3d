@@ -20,11 +20,12 @@ SRC = console.c\
 		raycast2.c\
 		utils.c\
 		sprite2.c\
-		sprite.c
+		sprite.c\
+		save.c
 
 SRCS = $(addprefix $(SRC_PATH)/, $(SRC))
 
-SAVE = save.bmp
+SAVE = screenshot.bmp
 
 OBJS = $(SRCS:.c=.o)
 
@@ -51,7 +52,7 @@ clean :
 	rm -rf $(OBJS)
 
 fclean : clean
-	rm -rf $(NAME)
+	rm -rf $(NAME) $(SAVE)
 
 re :fclean all
 
