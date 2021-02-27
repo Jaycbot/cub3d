@@ -29,7 +29,7 @@ SAVE = screenshot.bmp
 
 OBJS = $(SRCS:.c=.o)
 
-CFLAG = -Wall -Wextra -Wall -fsanitize=address
+CFLAG = -Wall -Wextra -Wall
 
 FRAMEWORK = -framework OpenGL -framework Appkit
 
