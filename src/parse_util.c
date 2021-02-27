@@ -51,6 +51,8 @@ int		parse_resolution(t_config *c, char *line)
 	int	i;
 
 	i = 0;
+	if (c->width || c->height)
+		error_etc("ERROR\nAlready Existing Resolution");
 	while (is_capital(line[i]) || is_space(line[i]))
 		++i;
 	c->width = ft_atoi(&line[i]);
@@ -59,6 +61,8 @@ int		parse_resolution(t_config *c, char *line)
 	c->height = ft_atoi(&line[i]);
 	if (c->width <= 0 || c->height <= 0)
 		error_etc("ERROR\nInvalid Resolution");
+	free(line);
+	check_resolution(c);
 	return (TRUE);
 }
 

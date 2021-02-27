@@ -15,7 +15,7 @@
 double	transform_to_texture(t_config *c, t_ray *ray, int stripid)
 {
 	double	ret;
-	int		unit_distance;
+	double	unit_distance;
 	t_ray	r;
 
 	r = ray[stripid];
@@ -23,15 +23,14 @@ double	transform_to_texture(t_config *c, t_ray *ray, int stripid)
 		unit_distance = (int)fmod(r.hit_p.y, c->tile);
 	else
 		unit_distance = (int)fmod(r.hit_p.x, c->tile);
-	ret = unit_distance / c->tile * c->textures[r.direction].width;
+	ret = unit_distance / c->tile * c->textures[r.direction].img.img_w;
 	return (ret);
 }
 
 double	normalize(double angle)
 {
-	while (angle > 2 * M_PI)
-		angle -= 2 * M_PI;
-	while (angle < 0)
+	angle = remainder(angle, 2 * M_PI);
+	if (angle < 0)
 		angle += 2 * M_PI;
 	return (angle);
 }
@@ -64,7 +63,7 @@ t_pos	wall_hit_v(t_config *c, t_ray *ray, double angle)
 	{
 		set_p(&to_check, next_touch.x +
 			(ray->isfacingleft ? -1 : 0), next_touch.y);
-		if ((blocked(c, to_check.x, to_check.y)) == 1)
+		if (blocked(c, to_check.x, to_check.y))
 			return (next_touch);
 		set_p(&next_touch, next_touch.x + step_x, next_touch.y + step_y);
 	}
@@ -83,8 +82,8 @@ t_pos	wall_hit_h(t_config *c, t_ray *ray, double angle)
 	intercept.y = floor(c->camera.y / c->tile) * c->tile;
 	if (ray->isfacingdown)
 		intercept.y += c->tile;
-	intercept.x = c->camera.x + (intercept.y - c->camera.y) * tan(angle);
-	step_x = c->tile * tan(angle);
+	intercept.x = c->camera.x + (intercept.y - c->camera.y) / tan(angle);
+	step_x = c->tile / tan(angle);
 	step_y = c->tile * (ray->isfacingup ? -1 : 1);
 	if ((ray->isfacingleft && step_x > 0) || (ray->isfacingright && step_x < 0))
 		step_x *= -1;
@@ -93,7 +92,7 @@ t_pos	wall_hit_h(t_config *c, t_ray *ray, double angle)
 	{
 		set_p(&to_check, next_touch.x, next_touch.y
 			+ (ray->isfacingup ? -1 : 0));
-		if (blocked(c, to_check.x, to_check.y) == 1)
+		if (blocked(c, to_check.x, to_check.y))
 			return (next_touch);
 		set_p(&next_touch, next_touch.x + step_x, next_touch.y + step_y);
 	}

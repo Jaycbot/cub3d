@@ -55,11 +55,12 @@ int		ft_atoi(const char *nptr)
 	return (ret);
 }
 
-int		to_coord(int x, int y, t_config *config)
+int		to_coord(int x, int y, t_texture t)
 {
 	int	index;
 
-	index = (int)floor(y) * config->width + (int)floor(x);
+	index = y * t.img.size_l +
+		x * (t.img.bpp / 8);
 	return (index);
 }
 

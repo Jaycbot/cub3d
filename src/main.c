@@ -12,7 +12,20 @@
 
 #include "../include/cub3d.h"
 
-int	close_win(void *param)
+void			check_resolution(t_config *c)
+{
+	int max_width;
+	int max_height;
+
+	mlx_get_screen_size(c->mlx, &max_width, &max_height);
+	if (c->width > max_width)
+		c->width = max_width;
+	if (c->height > max_height)
+		c->height = max_height;
+}
+
+
+int				close_win(void *param)
 {
 	t_config	*c;
 
@@ -21,29 +34,46 @@ int	close_win(void *param)
 	exit(0);
 }
 
-int	main_loop(t_config *config)
+int				main_loop(t_config *config)
 {
 	move_camera(config);
-	fill_floor_ceiling(config);
-	raycast(config);
+	raycast(config, config->rays);
+	render_sprites(config);
 	mlx_put_image_to_window(config->mlx, config->win.win,
 		config->img.img, 0, 0);
+	mlx_do_sync(config->mlx);
 	return (0);
 }
+static	void	set_rays(t_config *c)
+{
+	t_ray	*rays;
 
-int	main(int argc, char **argv)
+	if (!(rays = (t_ray *)malloc(sizeof(t_ray) * c->width)))
+		error_etc("ERROR\nMalloc failed");
+	c->rays = rays;
+}
+static	void	set_config(t_config *c, char *path)
+{
+	init_config(c);
+	g_camera_count = 0;
+	if (!parse_file(c, path))
+		error_etc("ERROR\nFalid to load file");
+	if (!check_and_find(c))
+		error_etc("ERROR\nInvalidMap");
+	parse_texture(c);
+	init_window(c);
+	set_rays(c);
+	set_sprite(c);
+}
+
+int				main(int argc, char **argv)
 {
 	t_config	config;
 
 	config.mlx = mlx_init();
-	init_config(&config);
-	g_camera_count = 0;
-	if (!parse_file(&config, argv[1]))
-		error_etc("ERROR\nFalid to load file");
-	if (!check_and_find(&config))
-		error_etc("ERROR\nInvalidMap");
-	init_window(&config);
-	parse_texture(&config);
+	if (!config.mlx)
+		error_etc("ERROR\nFalid to load mlx");
+	set_config(&config, argv[1]);
 	mlx_hook(config.win.win, X_EVENT_KEY_PRESS, 0, key_press, &config);
 	mlx_hook(config.win.win, X_EVENT_KEY_RELEASE, 0, key_release, &config);
 	mlx_hook(config.win.win, X_EVENT_KEY_EXIT, 0, close_win, &config);

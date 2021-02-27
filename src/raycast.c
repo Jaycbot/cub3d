@@ -12,22 +12,17 @@
 
 #include "../include/cub3d.h"
 
-static	int		texture_to_pixel(t_texture t, double x, double y)
+static	void	save_wall_info(t_config *c, t_ray *ray, double wall_h)
 {
-	int			color;
-	double		hop;
+	double	top;
+	double	bottom;
 
-	hop = 0;
-	color = 0;
-	if (x >= 0 && x < t.width)
-	{
-		if (y >= 0 && y < t.height)
-		{
-			hop = t.width * (int)y + (int)x;
-			color = *(t.texture + (int)floor(hop));
-		}
-	}
-	return (color);
+	top = (c->height / 2) - ((int)wall_h / 2);
+	if (top < 0)
+	top = 0;
+	bottom = (c->height / 2) + ((int)wall_h / 2);
+	ray->top_strip = top;
+	ray->bottom_strip = bottom;
 }
 
 void			draw(t_config *c, t_ray *ray, int stripid)
@@ -41,19 +36,19 @@ void			draw(t_config *c, t_ray *ray, int stripid)
 	r_p.x = transform_to_texture(c, ray, stripid);
 	wall_height = c->tile * (c->dist_to_plane / ray[stripid].actual_dist);
 	draw_point.x = stripid;
-	draw_point.y = (c->height / 2) - (wall_height / 2) - 1;
+	draw_point.y = (c->height / 2) - (wall_height / 2);
 	if (draw_point.y < 0)
 		draw_point.y = 0;
 	i = 0;
-	while (i++ < wall_height && draw_point.y < c->height)
+	save_wall_info(c, &ray[stripid], wall_height);
+	while (i++ < wall_height && ++draw_point.y < c->height)
 	{
-		r_p.y = (draw_point.y - (c->height * .5 - wall_height * .5))
-			/ wall_height * c->textures[ray[stripid].direction].height;
-		color = texture_to_pixel(c->textures[ray[stripid].direction],
+		r_p.y = (draw_point.y - (c->height / 2 - wall_height / 2))
+			/ wall_height * c->textures[ray[stripid].direction].img.img_h;
+		color = pick_pixel(&c->textures[ray[stripid].direction].img,
 			r_p.x, r_p.y);
 		if (color)
-			c->img.data[to_coord(draw_point.x, draw_point.y, c)] = color;
-		draw_point.y++;
+			insert_pixel(&c->img, draw_point.x, draw_point.y, color);
 	}
 }
 
@@ -63,7 +58,7 @@ static	void	init_ray_info(t_config *c, t_ray *ray)
 		ray->isfacingdown = TRUE;
 	else
 		ray->isfacingdown = FALSE;
-	ray->isfacingright = ray->angle < (M_PI / 2) || ray->angle > 1.5 * M_PI;
+	ray->isfacingright = ray->angle < (M_PI_2) || ray->angle > (1.5 * M_PI);
 	ray->isfacingup = !ray->isfacingdown;
 	ray->isfacingleft = !ray->isfacingright;
 }
@@ -78,8 +73,8 @@ void			casting(t_config *c, t_ray *ray, int id)
 	init_ray_info(c, ray);
 	hit_h = wall_hit_h(c, ray, ray->angle);
 	hit_v = wall_hit_v(c, ray, ray->angle);
-	dist_v = hypot(hit_v.x - c->camera.x, hit_v.y - c->camera.y);
-	dist_h = hypot(hit_h.x - c->camera.x, hit_h.y - c->camera.y);
+	dist_v = hypot(c->camera.x - hit_v.x, c->camera.y - hit_v.y);
+	dist_h = hypot(c->camera.x - hit_h.x, c->camera.y - hit_h.y);
 	if (dist_v < dist_h)
 	{
 		ray->actual_dist = dist_v * cos(ray->angle - c->camera.rotation_angle);
@@ -95,24 +90,22 @@ void			casting(t_config *c, t_ray *ray, int id)
 	find_direction(ray);
 }
 
-void			raycast(t_config *c)
+void			raycast(t_config *c, t_ray * rays)
 {
-	t_ray	*rays;
 	int		stripid;
 	double	angle;
 
 	stripid = 0;
-	if (!(rays = (t_ray *)malloc(sizeof(t_ray) * c->width)))
-		error_etc("ERROR\nMalloc failed");
 	angle = c->camera.rotation_angle - (c->fov / 2);
-	c->dist_to_plane = (c->rows * c->tile / 2) / tan(c->fov / 2);
+	c->dist_to_plane = (c->width / 2) / tan(c->fov / 2);
 	while (stripid < c->width)
 	{
 		rays[stripid].angle = normalize(angle);
 		casting(c, &rays[stripid], stripid);
 		draw(c, rays, stripid);
 		angle += (c->fov / c->width);
+		print_ceiling(c, &rays[stripid], stripid);
+		print_floor(c, &rays[stripid], stripid);
 		++stripid;
 	}
-	free(rays);
 }

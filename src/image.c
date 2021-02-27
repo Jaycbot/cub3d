@@ -12,68 +12,82 @@
 
 #include "../include/cub3d.h"
 
-void	fill_floor_ceiling(t_config *c)
+void		insert_pixel(t_img *img, int x, int y, int color)
+{
+	char	*dst;
+
+	dst = img->data + (y * img->size_l + x * (img->bpp / 8));
+	*(unsigned int*)dst = color;
+}
+
+int			pick_pixel(t_img *img, int x, int y)
+{
+	char	*dst;
+
+	dst = img->data + (y * img->size_l + x * (img->bpp / 8));
+	return (*(unsigned int*)dst);
+}
+
+void	print_floor(t_config *c, t_ray *ray, int col)
+{
+		int	row;
+
+		row = ray->bottom_strip;
+		while (row < c->height)
+		{
+			insert_pixel(&c->img, col, row, c->color_f);
+			++row;
+		}
+}
+
+void	print_ceiling(t_config *c, t_ray *ray, int col)
+{
+		int	row;
+
+		row = 0;
+		while (row < ray->top_strip)
+		{
+			insert_pixel(&c->img, col, row, c->color_c);
+			++row;
+		}
+}
+
+static	void	texture_img(t_config *c, int index)
 {
 	int			x;
 	int			y;
-	int			height;
-	int			width;
+	t_texture	*t;
 
-	height = c->height;
-	width = c->width;
-	y = 0;
-	while (y < height)
-	{
-		x = 0;
-		while (x < width)
-		{
-			c->img.data[y * width + x] = c->color_f;
-			c->img.data[(height - y - 1) * width + x] = c->color_c;
-			x++;
-		}
-		++y;
-	}
-}
-
-int		*texture_img(t_config *c, int index, t_img *img)
-{
-	int		*pixels;
-	int		x;
-	int		y;
-
-	img->img = mlx_xpm_file_to_image(c->mlx, c->textures[index].path,
-		&img->img_w, &img->img_h);
-	if (!img->img)
+	t = &c->textures[index];
+	t->img.img = mlx_xpm_file_to_image(c->mlx, 
+	t->path, &t->img.img_w, &t->img.img_h);
+	if (!t->img.img)
 		error_etc("ERROR\nInvalid Texture path");
-	c->textures[index].width = img->img_w;
-	c->textures[index].height = img->img_h;
-	img->data = (int *)mlx_get_data_addr(img->img, &img->bpp,
-		&img->size_l, &img->endian);
-	if (!(pixels = (int *)malloc(sizeof(int) * img->img_w * img->img_h)))
-		error_etc("ERROR\nMalloc failed");
-	y = 0;
-	while (y < img->img_h)
-	{
-		x = 0;
-		while (x++ < img->img_w)
-			pixels[y * img->img_w + x] = img->data[y * img->img_w + x];
-		++y;
-	}
-	mlx_destroy_image(c->mlx, img->img);
-	return (pixels);
+	t->img.data = mlx_get_data_addr(t->img.img, &t->img.bpp,
+		&t->img.size_l, &t->img.endian);
 }
 
-void	parse_texture(t_config *c)
+void		parse_texture(t_config *c)
 {
-	int		i;
-	t_img	img;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (i < 5)
 	{
-		c->textures[i].texture = texture_img(c, i, &img);
+		texture_img(c, i);
 		free(c->textures[i].path);
 		c->textures[i].path = NULL;
+		++i;
+	}
+	i = 0;
+	j = 0;
+	while (j < 8)
+	{
+		c->check_size[j] = c->textures[i].img.img_w;
+		++j;
+		c->check_size[j] = c->textures[i].img.img_h;
+		++j;
 		++i;
 	}
 }

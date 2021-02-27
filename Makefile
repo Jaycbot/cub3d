@@ -18,7 +18,9 @@ SRC = console.c\
 		parse_util.c\
 		raycast.c\
 		raycast2.c\
-		utils.c
+		utils.c\
+		sprite2.c\
+		sprite.c
 
 SRCS = $(addprefix $(SRC_PATH)/, $(SRC))
 
@@ -26,7 +28,7 @@ SAVE = save.bmp
 
 OBJS = $(SRCS:.c=.o)
 
-CFLAG = -Wall -Wextra -Wall
+CFLAG = -Wall -Wextra -Wall -fsanitize=address
 
 FRAMEWORK = -framework OpenGL -framework Appkit
 

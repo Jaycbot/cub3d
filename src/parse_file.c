@@ -50,7 +50,7 @@ int		parse_map(t_config *c, char *line)
 	c->map = ft_split(line, '\n');
 	if (!c->map)
 		error_etc("ERROR\nMalloc Faild");
-	free_line(line);
+	free(line);
 	while (c->map[rows])
 	{
 		c->map[rows] = trim_cols(c->map[rows]);
@@ -61,7 +61,7 @@ int		parse_map(t_config *c, char *line)
 	}
 	c->rows = rows;
 	c->cols = cols;
-	c->tile = c->width / cols;
+	c->tile = c->width / c->cols;
 	return (TRUE);
 }
 
@@ -97,7 +97,7 @@ int		parse_file_lines(t_config *c, int fd)
 {
 	int			read_b;
 	int			id;
-	static char	*temp;
+	static char	*rem;
 	char		*line;
 
 	read_b = 1;
@@ -112,14 +112,14 @@ int		parse_file_lines(t_config *c, int fd)
 		}
 		if (id == ID_MAP)
 		{
-			temp = bridge(&temp, line);
+			rem = bridge(&rem, line);
 			free(line);
-			temp = bridge(&temp, "\n");
+			rem = bridge(&rem, "\n");
 		}
 		else
 			parse_by_id(c, id, line);
 	}
-	return (parse_map(c, temp));
+	return (parse_map(c, rem));
 }
 
 int		parse_file(t_config *c, char *filepath)

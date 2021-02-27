@@ -17,29 +17,22 @@ int		blocked(t_config *c, double x, double y)
 	int	modx;
 	int	mody;
 
-	if (x < 0 || x > c->cols * c->tile || y < 0 || y > c->height)
+	if (x < 0 || x > c->width || y < 0 || y > c->height)
 		return (1);
 	modx = (int)floor(x / c->tile);
 	mody = (int)floor(y / c->tile);
 	if (modx < 0 || modx >= c->cols || mody < 0 || mody >= c->rows)
 		return (1);
-	if (c->map[mody][modx] == '1' || c->map[mody][modx] == '2')
-	{
-		if (c->map[mody][modx] == '1')
-			return (1);
-		if (c->map[mody][modx] == '2')
-			return (2);
-	}
-	else if (c->map[mody][modx] == '\0')
-		return (TRUE);
+	if (c->map[mody][modx] == '1' || c->map[mody][modx] == '\0')
+		return (1);
 	return (FALSE);
 }
 
 void	move_camera(t_config *c)
 {
-	float	a;
-	float	step;
-	float	temp;
+	double	a;
+	double	step;
+	double	temp;
 	t_pos	moved;
 
 	c->camera.rotation_angle += c->camera.turndirection * c->camera.turnspeed;
@@ -56,7 +49,7 @@ void	move_camera(t_config *c)
 		moved.x = c->camera.x + cos(c->camera.rotation_angle) * step;
 		moved.y = c->camera.y + sin(c->camera.rotation_angle) * step;
 	}
-	if (!blocked(c, moved.x, moved.y))
+	if (!blocked(c, moved.x, moved.y) && !is_sprite(moved.x, moved.y, c))
 	{
 		c->camera.x = moved.x;
 		c->camera.y = moved.y;

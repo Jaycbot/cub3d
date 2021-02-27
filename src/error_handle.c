@@ -33,7 +33,19 @@ int		free_line(char *line)
 	}
 	return (FALSE);
 }
-
+static	void	free_add(t_config *c)
+{
+	if (c->textures[0].img.img)
+		mlx_destroy_image(c->mlx, c->textures[0].img.img);
+	if (c->textures[1].img.img)
+		mlx_destroy_image(c->mlx, c->textures[1].img.img);
+	if (c->textures[2].img.img)
+		mlx_destroy_image(c->mlx, c->textures[2].img.img);
+	if (c->textures[3].img.img)
+		mlx_destroy_image(c->mlx, c->textures[3].img.img);
+	if (c->textures[4].img.img)
+		mlx_destroy_image(c->mlx, c->textures[4].img.img);
+}
 void	free_all(t_config *c)
 {
 	int i;
@@ -45,11 +57,9 @@ void	free_all(t_config *c)
 			free_line(c->map[i++]);
 		free(c->map);
 	}
-	i = 0;
-	while (i < 5)
-	{
-		if (c->textures[i].texture)
-			free(c->textures[i].texture);
-		++i;
-	}
+	if (c->rays)
+		free(c->rays);
+	if (c->sprites)
+		free(c->sprites);
+	free_add(c);
 }

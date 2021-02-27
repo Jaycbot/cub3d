@@ -30,23 +30,21 @@ int			edge_check(t_config *c)
 {
 	int		i;
 	int		j;
-	char	**map;
 
 	i = 0;
 	j = 0;
-	map = c->map;
-	while (map[i])
+	while (c->map[i])
 	{
 		j = 0;
-		if (map[i][j] != '1')
+		if (c->map[i][j] != '1')
 			return (FALSE);
-		j = ft_strlen(map[i]);
-		if (map[i][j - 1] != '1')
+		j = ft_strlen(c->map[i]);
+		if (c->map[i][j - 1] != '1')
 			return (FALSE);
 		++i;
 	}
 	--i;
-	if (!edge_checkadd(map[0]) || !edge_checkadd(map[i]))
+	if (!edge_checkadd(c->map[0]) || !edge_checkadd(c->map[i]))
 		return (FALSE);
 	return (TRUE);
 }
@@ -58,13 +56,13 @@ void		parse_position(t_config *c, int i, int j)
 
 	dir = c->map[i][j];
 	if (dir == 'N')
-		angle = (M_PI * 2) / 4 * 3;
+		angle = M_PI * 1.5;
 	else if (dir == 'S')
-		angle = (M_PI * 2) / 4 * 1;
+		angle = M_PI * 0.5;
+	else if (dir == 'E')
+		angle = 2 * M_PI;
 	else if (dir == 'W')
-		angle = (M_PI * 2) / 4 * 2;
-	else
-		angle = (M_PI * 2) / 4 * 4;
+		angle = M_PI;
 	c->camera.rotation_angle = angle;
 	c->camera.x = (j + .5) * c->tile;
 	c->camera.y = (i + .5) * c->tile;
@@ -74,19 +72,19 @@ int			check_and_find(t_config *c)
 {
 	int		i;
 	int		j;
-	char	**map;
 
 	i = 0;
-	map = c->map;
 	if (!edge_check(c))
 		return (FALSE);
-	while (map[i])
+	while (c->map[i])
 	{
 		j = 0;
-		while (map[i][j])
+		while (c->map[i][j])
 		{
-			if (is_in("NSWE", map[i][j]))
+			if (is_in("NSWE", c->map[i][j]))
 				parse_position(c, i, j);
+			if (c->map[i][j] == '2')
+				g_sprite_count++;
 			++j;
 		}
 		++i;
