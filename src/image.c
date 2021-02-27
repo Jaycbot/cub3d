@@ -62,7 +62,7 @@ static	void	texture_img(t_config *c, int index)
 	t->img.img = mlx_xpm_file_to_image(c->mlx, 
 	t->path, &t->img.img_w, &t->img.img_h);
 	if (!t->img.img)
-		error_etc("ERROR\nInvalid Texture path");
+		error_etc("ERROR\nInvalid Texture path", c);
 	t->img.data = mlx_get_data_addr(t->img.img, &t->img.bpp,
 		&t->img.size_l, &t->img.endian);
 }

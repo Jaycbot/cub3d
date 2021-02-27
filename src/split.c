@@ -78,7 +78,7 @@ char			**ft_split(char const *s, char c)
 			++temp;
 		ret_strs[i] = find_next_w(temp, c);
 		if (!ret_strs[i])
-			error_etc("ERROR\nMalloc faild");
+			exit(1);
 		while (!is_delimiter(*temp, c) && *temp)
 			++temp;
 		++i;

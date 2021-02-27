@@ -43,7 +43,7 @@ void		set_sprite(t_config *c)
 		return ;
 	c->sprites = (t_sprite *)malloc(sizeof(t_sprite) * g_sprite_count);
 	if (!c->sprites)
-		error_etc("ERROR\nMalloc Failed");
+		error_etc("ERROR\nMalloc Failed", c);
 	info_sprites(c);
 }
 

@@ -15,10 +15,10 @@
 void	init_window(t_config *c)
 {
 	if (c->width < 500 || c->height < 500)
-		error_etc("ERROR\nMinimum window size is 500 x 500");
+		error_etc("ERROR\nMinimum window size is 500 x 500", c);
 	c->win.win = mlx_new_window(c->mlx, c->width, c->height, "cub3d");
 	c->img.img = mlx_new_image(c->mlx, c->width, c->height);
-	c->img.data = (int *)mlx_get_data_addr(c->img.img, &c->img.bpp,
+	c->img.data = mlx_get_data_addr(c->img.img, &c->img.bpp,
 		&c->img.size_l, &c->img.endian);
 }
 

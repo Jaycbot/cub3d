@@ -49,7 +49,7 @@ static	void	set_rays(t_config *c)
 	t_ray	*rays;
 
 	if (!(rays = (t_ray *)malloc(sizeof(t_ray) * c->width)))
-		error_etc("ERROR\nMalloc failed");
+		error_etc("ERROR\nMalloc failed", c);
 	c->rays = rays;
 }
 static	void	set_config(t_config *c, char *path)
@@ -57,9 +57,9 @@ static	void	set_config(t_config *c, char *path)
 	init_config(c);
 	g_camera_count = 0;
 	if (!parse_file(c, path))
-		error_etc("ERROR\nFalid to load file");
+		error_etc("ERROR\nFalid to load file", c);
 	if (!check_and_find(c))
-		error_etc("ERROR\nInvalidMap");
+		error_etc("ERROR\nInvalidMap", c);
 	parse_texture(c);
 	init_window(c);
 	set_rays(c);
@@ -72,7 +72,7 @@ int				main(int argc, char **argv)
 
 	config.mlx = mlx_init();
 	if (!config.mlx)
-		error_etc("ERROR\nFalid to load mlx");
+		error_etc("ERROR\nFalid to load mlx", &config);
 	set_config(&config, argv[1]);
 	mlx_hook(config.win.win, X_EVENT_KEY_PRESS, 0, key_press, &config);
 	mlx_hook(config.win.win, X_EVENT_KEY_RELEASE, 0, key_release, &config);

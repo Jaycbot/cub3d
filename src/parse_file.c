@@ -12,7 +12,7 @@
 
 #include "../include/cub3d.h"
 
-char	*trim_cols(char *row)
+char	*trim_cols(char *row, t_config *c)
 {
 	int		i;
 	int		j;
@@ -21,7 +21,7 @@ char	*trim_cols(char *row)
 	i = 0;
 	j = trimmed_size(row);
 	if (!(trimmed = (char *)malloc(sizeof(char) * (j + 1))))
-		error_etc("ERROR\nMalloc Failed");
+		error_etc("ERROR\nMalloc Failed", c);
 	j = 0;
 	while (row[i])
 	{
@@ -49,11 +49,11 @@ int		parse_map(t_config *c, char *line)
 	cols = 0;
 	c->map = ft_split(line, '\n');
 	if (!c->map)
-		error_etc("ERROR\nMalloc Faild");
+		error_etc("ERROR\nMalloc Faild", c);
 	free(line);
 	while (c->map[rows])
 	{
-		c->map[rows] = trim_cols(c->map[rows]);
+		c->map[rows] = trim_cols(c->map[rows], c);
 		temp = ft_strlen(c->map[rows]);
 		if (cols != temp)
 			cols = max(cols, temp);
@@ -72,7 +72,7 @@ int		parse_by_id(t_config *c, int id, char *line)
 	else if (id >= 0 && id <= 4)
 	{
 		if (c->textures[id].path)
-			error_etc("ERROR\nAlready Exist path");
+			error_etc("ERROR\nAlready Exist path", c);
 		c->textures[id].path = parse_path(line);
 	}
 	else if (id == ID_FLOOR || id == ID_CEILING)
@@ -80,14 +80,14 @@ int		parse_by_id(t_config *c, int id, char *line)
 		if (id == ID_FLOOR)
 		{
 			if (c->color_f)
-				error_etc("ERROR\nAlready Exist path");
-			c->color_f = parse_color(line);
+				error_etc("ERROR\nAlready Exist path", c);
+			c->color_f = parse_color(line, c);
 		}
 		else
 		{
 			if (c->color_c)
-				error_etc("ERROR\nAlready Exist path");
-			c->color_c = parse_color(line);
+				error_etc("ERROR\nAlready Exist path", c);
+			c->color_c = parse_color(line, c);
 		}
 	}
 	return (free_line(line));
@@ -103,8 +103,8 @@ int		parse_file_lines(t_config *c, int fd)
 	read_b = 1;
 	while ((read_b = get_next_line(fd, &line)) > 0)
 	{
-		if ((id = identifier_check(line)) == -1)
-			error_etc("ERROR\nWrong Identifier");
+		if ((id = identifier_check(line, c)) == -1)
+			error_etc("ERROR\nWrong Identifier", c);
 		if (empty_line_check(line))
 		{
 			free_line(line);
@@ -127,10 +127,10 @@ int		parse_file(t_config *c, char *filepath)
 	int	fd;
 
 	if (!extenstion_check(filepath))
-		error_etc("ERROR\nInvalid extention");
+		error_etc("ERROR\nInvalid extention", c);
 	fd = open(filepath, O_RDONLY);
 	if (fd < 0)
-		error_etc("ERROR\nNo such file or invalid filepath");
+		error_etc("ERROR\nNo such file or invalid filepath", c);
 	parse_file_lines(c, fd);
 	close(fd);
 	return (TRUE);

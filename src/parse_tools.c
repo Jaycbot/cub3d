@@ -55,7 +55,7 @@ int	is_capital(char c)
 	return ((c >= 65 && c <= 90) ? 1 : 0);
 }
 
-int	identifier_check(char *line)
+int	identifier_check(char *line, t_config *c)
 {
 	if (line[0] == 'R' && line[1] == ' ')
 		return (ID_RESOLUTION);
@@ -76,6 +76,6 @@ int	identifier_check(char *line)
 	else if (contents_check(line))
 		return (ID_MAP);
 	if (g_camera_count != 1)
-		error_etc("ERROR\nInvalid camera positions in the map");
+		error_etc("ERROR\nInvalid camera positions in the map", c);
 	return (-1);
 }

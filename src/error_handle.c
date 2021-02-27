@@ -18,9 +18,10 @@ void	error_with_message(char *prefix)
 	exit(EXIT_FAILURE);
 }
 
-void	error_etc(char *msg)
+void	error_etc(char *msg, t_config *c)
 {
 	printf("%s\n", msg);
+	free_all(c);
 	exit(EXIT_FAILURE);
 }
 

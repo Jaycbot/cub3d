@@ -19,7 +19,7 @@ int		is_digit(char c)
 	return (0);
 }
 
-int		parse_color(char *line)
+int		parse_color(char *line, t_config *c)
 {
 	int	r;
 	int	g;
@@ -41,7 +41,7 @@ int		parse_color(char *line)
 		++i;
 	b = ft_atoi(line + i);
 	if ((r > 255 || r < 0) || (g > 255 || g < 0) || ((b > 255 || b < 0)))
-		error_etc("ERROR\nInvalid color");
+		error_etc("ERROR\nInvalid color", c);
 	i = r << 16 | g << 8 | b;
 	return (i);
 }
@@ -52,7 +52,7 @@ int		parse_resolution(t_config *c, char *line)
 
 	i = 0;
 	if (c->width || c->height)
-		error_etc("ERROR\nAlready Existing Resolution");
+		error_etc("ERROR\nAlready Existing Resolution", c);
 	while (is_capital(line[i]) || is_space(line[i]))
 		++i;
 	c->width = ft_atoi(&line[i]);
@@ -60,7 +60,7 @@ int		parse_resolution(t_config *c, char *line)
 		++i;
 	c->height = ft_atoi(&line[i]);
 	if (c->width <= 0 || c->height <= 0)
-		error_etc("ERROR\nInvalid Resolution");
+		error_etc("ERROR\nInvalid Resolution", c);
 	free(line);
 	check_resolution(c);
 	return (TRUE);
